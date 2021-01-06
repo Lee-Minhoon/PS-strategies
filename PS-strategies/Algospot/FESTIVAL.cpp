@@ -2,7 +2,7 @@
 
 using namespace std;
 
-double PrintCost(int* cost, int n, int l)
+double getCost(int* cost, int n, int l)
 {
     double avg, res = 1000000;
 
@@ -34,7 +34,7 @@ int main(void)
         for (int j = 0; j < n; j++) {
             cin >> cost[j];
         }
-        cout << PrintCost(cost, n, l) << endl;
+        cout << getCost(cost, n, l) << endl;
     }
 
     return 0;
