@@ -1,88 +1,86 @@
-#include <iostream>
-#include <vector>
+#include<iostream>
 
 using namespace std;
 
-const int CLOCK_CNT = 16;
-const int SWITCH_CNT = 10;
-const int INF = SWITCH_CNT * 3 + 1;
+const int MAX = 16;
 
-const vector< vector<int>> clockSwitches = {
-    { 0, 1, 2 },
-    { 3, 7, 9, 11},
-    { 4, 10, 14, 15 },
-    { 0, 4, 5, 6, 7 },
-    { 6, 7, 8, 10, 12 },
-    { 0, 2, 14, 15 },
-    { 3, 14, 15 },
-    { 4, 5, 7, 14, 15 },
-    { 1, 2, 3, 4, 5 },
-    { 3, 4, 5, 9, 13 }
-};
+string s;
+int r;
 
-int nextClock(int clock) {
-    return (clock == 12) ? 3 : (clock + 3);
-}
+char quad[MAX][MAX];
 
-void push(vector<int>& clocks, int switchNum) {
-    for (auto i : clockSwitches[switchNum]) {
-        clocks[i] = nextClock(clocks[i]);
-    }
-}
-
-bool isAllSync(const vector<int>& clocks) {
-    for (auto c : clocks) {
-        if (c != 12) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-int solution(vector<int> clocks, int switchNum) {
-    if (switchNum == SWITCH_CNT) {
-        return isAllSync(clocks) ? 0 : INF;
-    }
-
-    int ret = INF;
-
-    for (int i = 0; i < 4; i++) {
-        int tmp = i + solution(clocks, switchNum + 1);
-        ret = (ret < tmp) ? ret : tmp;
-        push(clocks, switchNum);
-    }
-
-    return ret;
-}
-
-int main() {
-    int C;
-    cin >> C;
-
-    if (!(0 < C && C <= 30)) {
-        cout << "fail: C must between 1 to 30" << endl;
-        return 0;
-    }
-
-    for (int i = 0; i < C; i++) {
-        auto clocks = vector<int>(CLOCK_CNT);
-
-        for (int j = 0; j < CLOCK_CNT; j++) {
-            int N;
-            cin >> N;
-
-            if (!(N == 3 || N == 6 || N == 9 || N == 12)) {
-                cout << "fail: N must 3 or 6 or 9 or 12" << endl;
-                return 0;
+void decom(int y, int x, int len)
+{
+    int half = len / 2;
+    for (int q = 0; q < 4; q++) {
+        r++;
+        int y_loc = y + (q / 2 * len);
+        int x_loc = x + (q % 2 * len);
+        if (s[r] == 'x') decom(y_loc, x_loc, half);
+        else {
+            for (int i = y_loc; i < y_loc + len; i++) {
+                for (int j = x_loc; j < x_loc + len; j++) {
+                    quad[i][j] = s[r];
+                }
             }
-
-            clocks[j] = N;
         }
+    }
+    return;
+}
 
-        int result = solution(clocks, 0);
-        result = (result == INF) ? -1 : result;
-        cout << result << endl;
+void reverse()
+{
+    for (int i = 0; i < MAX / 2; i++) {
+        for (int j = 0; j < MAX; j++) {
+            char tmp = quad[i][j];
+            quad[i][j] = quad[MAX - 1 - i][j];
+            quad[MAX - 1 - i][j] = tmp;
+        }
+    }
+}
+
+void com(int y, int x, int len)
+{
+    if (len == 0) return;
+    int value = 0;
+    for (int i = y; i < y + len; i++) {
+        for (int j = x; j < x + len; j++) {
+            if (quad[i][j] == 'w') value++;
+            else value--;
+        }
+    }
+    if (value == len * len) {
+        cout << "w";
+    }
+    else if (value == len * len * -1) {
+        cout << "b";
+    }
+    else {
+        int half = len / 2;
+        cout << "x";
+        for (int q = 0; q < 4; q++) {
+            int y_loc = y + (q / 2 * half);
+            int x_loc = x + (q % 2 * half);
+            com(y_loc, x_loc, half);
+        }
+    }
+}
+
+int main(void)
+{
+    int c; cin >> c;
+
+    for (int i = 0; i < c; i++) {
+        cin >> s;
+        if (s[0] == 'x') {
+            r = 0;
+            decom(0, 0, 8);
+            reverse();
+            com(0, 0, 16);
+            cout << "\n";
+        }
+        else if (s[0] == 'w') cout << "w\n";
+        else cout << "b\n";
     }
 
     return 0;
