@@ -8,10 +8,12 @@ int fence[MAX];
 
 int dv(int left, int right)
 {
+    if (left == right) return fence[left];
     int mid = (left + right) / 2;
+    int ret = max(dv(left, mid), dv(mid + 1, right));
+    
     int lp = mid;
     int rp = mid;
-    int ret = fence[mid];
     int height = fence[mid];
 
     while (left < lp || rp < right) {
