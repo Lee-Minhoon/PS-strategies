@@ -16,17 +16,17 @@ bool match(int w, int s)
 {
     int& ret = cache[w][s];
 
-    // 이미 캐싱됨
+    // 이미 캐싱 됨
     if (ret != -1) {
         return ret;
     }
     
-    // 비교가 끝나지 않았고, 와일드 카드의 패턴이 ?이거나 비교될 문자가 같은 경우
+    // 비교가 끝나지 않았고, 와일드카드의 패턴이 ? 이거나 비교될 문자가 같은 경우
     if (w < W.size() && s < S.size() && (W[w] == '?' || W[w] == S[s])) {
         return ret = match(w + 1, s + 1);
     }
 
-    // while문을 탈출했을 때, 비교가 완전히 끝나지 않았다면 매칭이 안되거나 *를 만났거나
+    // while문을 탈출했을 때, 비교가 완전히 끝나지 않았다면 매칭이 안 되거나 *를 만났거나
     if (w == W.size()) {
         return ret = (s == S.size());
     }
